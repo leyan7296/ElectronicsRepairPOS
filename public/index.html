@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Platform - The Future of Retail Technology</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Lottie -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0A0F2D 0%, #1a1f3a 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Particle Background */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px 0;
+            background: rgba(10, 15, 45, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(10, 15, 45, 0.98);
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFAB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #E8E8E8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #00D4FF;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFAB 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFAB 100%);
+            color: #0A0F2D;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-content {
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #00D4FF 50%, #00FFAB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5)); }
+            to { filter: drop-shadow(0 0 40px rgba(0, 255, 171, 0.5)); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #E8E8E8;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFAB 100%);
+            color: #0A0F2D;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #00D4FF;
+            padding: 16px 32px;
+            border: 2px solid #00D4FF;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-secondary:hover {
+            background: #00D4FF;
+            color: #0A0F2D;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00D4FF;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #E8E8E8;
+            margin-top: 5px;
+        }
+
+        /* 3D Scene */
+        .hero-3d {
+            position: relative;
+            height: 600px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 255, 171, 0.1) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        #three-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .floating-card {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-card:nth-child(1) {
+            top: 10%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-card:nth-child(2) {
+            bottom: 20%;
+            left: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-card:nth-child(3) {
+            top: 50%;
+            right: 5%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* Industry Personalization */
+        .industry-selector {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .industry-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .industry-btn {
+            background: transparent;
+            color: #E8E8E8;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .industry-btn:hover,
+        .industry-btn.active {
+            background: #00D4FF;
+            color: #0A0F2D;
+            border-color: #00D4FF;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #1a1f3a 0%, #0A0F2D 100%);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #E8E8E8;
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFAB 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .feature-description {
+            color: #E8E8E8;
+            line-height: 1.6;
+        }
+
+        /* ROI Calculator */
+        .roi-calculator {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #0A0F2D 0%, #1a1f3a 100%);
+        }
+
+        .calculator-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .calculator-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .calculator-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFAB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .calculator-subtitle {
+            font-size: 1.2rem;
+            color: #E8E8E8;
+            margin-bottom: 40px;
+        }
+
+        .calculator-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .control-group {
+            text-align: left;
+        }
+
+        .control-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: #00D4FF;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .roi-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .roi-item {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .roi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00D4FF;
+            margin-bottom: 10px;
+        }
+
+        .roi-label {
+            color: #E8E8E8;
+            font-size: 0.9rem;
+        }
+
+        /* Demo Dashboard */
+        .demo-dashboard {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #1a1f3a 0%, #0A0F2D 100%);
+        }
+
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .demo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .demo-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .demo-subtitle {
+            font-size: 1.2rem;
+            color: #E8E8E8;
+            margin-bottom: 40px;
+        }
+
+        .upgrade-cta {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #0A0F2D;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upgrade-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+
+        .demo-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .demo-status {
+            background: rgba(0, 255, 171, 0.2);
+            color: #00FFAB;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .demo-content {
+            color: #E8E8E8;
+            line-height: 1.6;
+        }
+
+        .premium-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .demo-card:hover .premium-overlay {
+            opacity: 1;
+        }
+
+        .premium-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00D4FF;
+            margin-bottom: 10px;
+        }
+
+        .premium-description {
+            color: #E8E8E8;
+            margin-bottom: 20px;
+        }
+
+        .premium-btn {
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFAB 100%);
+            color: #0A0F2D;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .premium-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            background: #0A0F2D;
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFAB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .footer-text {
+            color: #E8E8E8;
+            margin-bottom: 30px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-links a {
+            color: #E8E8E8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #00D4FF;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 30px;
+            color: #E8E8E8;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calculator-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .roi-results {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.6s ease;
+        }
+
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.6s ease;
+        }
+
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Loading States */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1f3a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFAB 100%);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #00FFAB 0%, #00D4FF 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">POS Platform</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#roi">ROI Calculator</a></li>
+                <li><a href="#demo">Demo</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="#demo" class="cta-button">Start Free Trial</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content fade-in">
+                <div class="hero-badge">
+                    <span>✨</span>
+                    <span>EXPLORER MODE</span>
+                </div>
+                <h1 class="hero-title" id="hero-title">Intelligence Meets Transaction</h1>
+                <p class="hero-subtitle">
+                    Experience the future of retail technology with our cutting-edge POS platform. 
+                    Transform your business with AI-powered insights, seamless integrations, and 
+                    enterprise-grade security.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#demo" class="btn-primary">Begin Your Experience</a>
+                    <a href="#contact" class="btn-secondary">Schedule Private Demo</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="99.9">0</span>
+                        <span class="stat-label">Uptime</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="50000">0</span>
+                        <span class="stat-label">Transactions/Day</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="24">0</span>
+                        <span class="stat-label">Support Hours</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-3d">
+                <canvas id="three-canvas"></canvas>
+                <div class="floating-elements">
+                    <div class="floating-card">
+                        <div style="font-size: 0.9rem; color: #00D4FF; font-weight: 600;">Sales Analytics</div>
+                        <div style="font-size: 1.5rem; color: #ffffff; font-weight: 700;">+23% Revenue</div>
+                    </div>
+                    <div class="floating-card">
+                        <div style="font-size: 0.9rem; color: #00FFAB; font-weight: 600;">Inventory</div>
+                        <div style="font-size: 1.5rem; color: #ffffff; font-weight: 700;">98% Accuracy</div>
+                    </div>
+                    <div class="floating-card">
+                        <div style="font-size: 0.9rem; color: #FFD700; font-weight: 600;">Customer Satisfaction</div>
+                        <div style="font-size: 1.5rem; color: #ffffff; font-weight: 700;">4.9/5</div>
+                    </div>
+                </div>
+                <div class="industry-selector">
+                    <div style="text-align: center; margin-bottom: 15px; color: #E8E8E8; font-weight: 600;">Choose Your Industry</div>
+                    <div class="industry-buttons">
+                        <button class="industry-btn active" data-industry="retail">Retail</button>
+                        <button class="industry-btn" data-industry="restaurant">Restaurant</button>
+                        <button class="industry-btn" data-industry="coffee">Coffee Shop</button>
+                        <button class="industry-btn" data-industry="pharmacy">Pharmacy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <h2 class="section-title fade-in">Revolutionary Features</h2>
+            <p class="section-subtitle fade-in">
+                Discover the powerful capabilities that make our POS platform the choice of forward-thinking businesses
+            </p>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🚀</div>
+                    <h3 class="feature-title">AI-Powered Analytics</h3>
+                    <p class="feature-description">
+                        Get intelligent insights into your business performance with machine learning algorithms 
+                        that predict trends and optimize operations.
+                    </p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">Enterprise Security</h3>
+                    <p class="feature-description">
+                        Bank-level encryption, multi-factor authentication, and compliance with industry standards 
+                        keep your data secure and protected.
+                    </p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Mobile-First Design</h3>
+                    <p class="feature-description">
+                        Access your POS system from anywhere with our responsive design that works seamlessly 
+                        across all devices and screen sizes.
+                    </p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Real-Time Sync</h3>
+                    <p class="feature-description">
+                        Keep all your data synchronized across multiple locations with real-time updates 
+                        and automatic backup systems.
+                    </p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Advanced Reporting</h3>
+                    <p class="feature-description">
+                        Generate comprehensive reports with customizable dashboards and automated insights 
+                        that drive business growth.
+                    </p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🔌</div>
+                    <h3 class="feature-title">Seamless Integrations</h3>
+                    <p class="feature-description">
+                        Connect with hundreds of popular business tools and services through our extensive 
+                        integration marketplace.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI Calculator -->
+    <section class="roi-calculator" id="roi">
+        <div class="calculator-container">
+            <div class="calculator-card">
+                <h2 class="calculator-title">Calculate Your ROI</h2>
+                <p class="calculator-subtitle">
+                    See how much you can save and earn with our POS platform
+                </p>
+                <div class="calculator-controls">
+                    <div class="control-group">
+                        <label class="control-label">Daily Transactions</label>
+                        <input type="range" class="control-input" id="transactions" min="50" max="500" value="150">
+                        <div style="text-align: center; margin-top: 10px; color: #00D4FF; font-weight: 600;" id="transactions-value">150</div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Average Transaction Value</label>
+                        <input type="range" class="control-input" id="avg-transaction" min="15" max="150" value="45">
+                        <div style="text-align: center; margin-top: 10px; color: #00D4FF; font-weight: 600;" id="avg-transaction-value">$45</div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Staff Size</label>
+                        <input type="range" class="control-input" id="staff-size" min="2" max="20" value="5">
+                        <div style="text-align: center; margin-top: 10px; color: #00D4FF; font-weight: 600;" id="staff-size-value">5</div>
+                    </div>
+                </div>
+                <div class="roi-results">
+                    <div class="roi-item">
+                        <div class="roi-value" id="monthly-savings">$2,340</div>
+                        <div class="roi-label">Monthly Savings</div>
+                    </div>
+                    <div class="roi-item">
+                        <div class="roi-value" id="annual-savings">$28,080</div>
+                        <div class="roi-label">Annual Savings</div>
+                    </div>
+                    <div class="roi-item">
+                        <div class="roi-value" id="roi-percentage">340%</div>
+                        <div class="roi-label">ROI Percentage</div>
+                    </div>
+                    <div class="roi-item">
+                        <div class="roi-value" id="payback-period">3.2</div>
+                        <div class="roi-label">Payback (Months)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Dashboard -->
+    <section class="demo-dashboard" id="demo">
+        <div class="demo-container">
+            <div class="demo-header">
+                <div class="demo-badge">
+                    <span>🌟</span>
+                    <span>EXPLORER MODE</span>
+                </div>
+                <h2 class="demo-title">Experience the Platform</h2>
+                <p class="demo-subtitle">
+                    Get a taste of what our POS platform can do for your business
+                </p>
+                <a href="#contact" class="upgrade-cta">
+                    Unlock Full Potential
+                    <span>→</span>
+                </a>
+            </div>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <div class="demo-card-header">
+                        <h3 class="demo-card-title">Sales Dashboard</h3>
+                        <span class="demo-status">Fully Functional</span>
+                    </div>
+                    <div class="demo-content">
+                        <p>Real-time sales tracking with beautiful visualizations and instant insights into your business performance.</p>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Today's Sales:</span>
+                                <span style="color: #00D4FF; font-weight: 600;">$2,847.50</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Transactions:</span>
+                                <span style="color: #00FFAB; font-weight: 600;">47</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Avg. Transaction:</span>
+                                <span style="color: #FFD700; font-weight: 600;">$60.59</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="premium-overlay">
+                        <div class="premium-text">Advanced Analytics</div>
+                        <div class="premium-description">Get deep insights into product performance and customer behavior</div>
+                        <a href="#contact" class="premium-btn">See How It Works</a>
+                    </div>
+                </div>
+                <div class="demo-card">
+                    <div class="demo-card-header">
+                        <h3 class="demo-card-title">Inventory Management</h3>
+                        <span class="demo-status">Preview Mode</span>
+                    </div>
+                    <div class="demo-content">
+                        <p>Smart inventory tracking with automated reorder points and low stock alerts.</p>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(255, 107, 107, 0.1); border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Low Stock Items:</span>
+                                <span style="color: #FF6B6B; font-weight: 600;">3</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Total Products:</span>
+                                <span style="color: #00D4FF; font-weight: 600;">247</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Inventory Value:</span>
+                                <span style="color: #00FFAB; font-weight: 600;">$12,450</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="premium-overlay">
+                        <div class="premium-text">Automated Reordering</div>
+                        <div class="premium-description">Never run out of stock with intelligent reorder suggestions</div>
+                        <a href="#contact" class="premium-btn">See How It Works</a>
+                    </div>
+                </div>
+                <div class="demo-card">
+                    <div class="demo-card-header">
+                        <h3 class="demo-card-title">Customer Database</h3>
+                        <span class="demo-status">Limited Access</span>
+                    </div>
+                    <div class="demo-content">
+                        <p>Comprehensive customer management with purchase history and loyalty tracking.</p>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(0, 255, 171, 0.1); border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Total Customers:</span>
+                                <span style="color: #00FFAB; font-weight: 600;">1,247</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>VIP Members:</span>
+                                <span style="color: #FFD700; font-weight: 600;">89</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Avg. Lifetime Value:</span>
+                                <span style="color: #00D4FF; font-weight: 600;">$234</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="premium-overlay">
+                        <div class="premium-text">Advanced Segmentation</div>
+                        <div class="premium-description">Target customers with precision using AI-powered segmentation</div>
+                        <a href="#contact" class="premium-btn">See How It Works</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="footer-container">
+            <div class="footer-logo">POS Platform</div>
+            <p class="footer-text">
+                Transform your business with the most advanced POS system available. 
+                Join thousands of satisfied customers who trust us with their success.
+            </p>
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#roi">ROI Calculator</a>
+                <a href="#demo">Demo</a>
+                <a href="mailto:contact@poscorp.com">Contact</a>
+                <a href="tel:+1-555-123-4567">Support</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 POS Platform. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Particle System
+        class ParticleSystem {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.mouse = { x: 0, y: 0 };
+                this.init();
+            }
+
+            init() {
+                this.resize();
+                this.createParticles();
+                this.animate();
+                window.addEventListener('resize', () => this.resize());
+                window.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                });
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            createParticles() {
+                const particleCount = 100;
+                for (let i = 0; i < particleCount; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        size: Math.random() * 2 + 1,
+                        opacity: Math.random() * 0.5 + 0.2
+                    });
+                }
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.particles.forEach(particle => {
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+
+                    if (particle.x < 0 || particle.x > this.canvas.width) particle.vx *= -1;
+                    if (particle.y < 0 || particle.y > this.canvas.height) particle.vy *= -1;
+
+                    const distance = Math.sqrt(
+                        Math.pow(particle.x - this.mouse.x, 2) + 
+                        Math.pow(particle.y - this.mouse.y, 2)
+                    );
+
+                    if (distance < 100) {
+                        particle.vx += (this.mouse.x - particle.x) * 0.001;
+                        particle.vy += (this.mouse.y - particle.y) * 0.001;
+                    }
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgba(0, 212, 255, ${particle.opacity})`;
+                    this.ctx.fill();
+                });
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // 3D Scene
+        class ThreeScene {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+                this.controls = new THREE.OrbitControls(this.camera, canvas);
+                
+                this.init();
+            }
+
+            init() {
+                this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
+                this.renderer.setClearColor(0x000000, 0);
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+                // Lighting
+                const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+                this.scene.add(ambientLight);
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+                directionalLight.position.set(5, 5, 5);
+                directionalLight.castShadow = true;
+                this.scene.add(directionalLight);
+
+                // Create POS terminal
+                this.createTerminal();
+                this.createParticles();
+
+                this.camera.position.set(0, 2, 5);
+                this.controls.enableDamping = true;
+                this.controls.dampingFactor = 0.05;
+
+                this.animate();
+                window.addEventListener('resize', () => this.resize());
+            }
+
+            createTerminal() {
+                const geometry = new THREE.BoxGeometry(2, 1, 1);
+                const material = new THREE.MeshPhongMaterial({ 
+                    color: 0x0A0F2D,
+                    shininess: 100,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                
+                this.terminal = new THREE.Mesh(geometry, material);
+                this.terminal.position.set(0, 0.5, 0);
+                this.terminal.castShadow = true;
+                this.scene.add(this.terminal);
+
+                // Screen
+                const screenGeometry = new THREE.PlaneGeometry(1.5, 0.8);
+                const screenMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0x00D4FF,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                this.screen = new THREE.Mesh(screenGeometry, screenMaterial);
+                this.screen.position.set(0, 0.5, 0.51);
+                this.scene.add(this.screen);
+            }
+
+            createParticles() {
+                const particleCount = 200;
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+
+                for (let i = 0; i < particleCount; i++) {
+                    positions[i * 3] = (Math.random() - 0.5) * 20;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+
+                    const color = new THREE.Color();
+                    color.setHSL(0.5 + Math.random() * 0.2, 1, 0.5);
+                    colors[i * 3] = color.r;
+                    colors[i * 3 + 1] = color.g;
+                    colors[i * 3 + 2] = color.b;
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                const material = new THREE.PointsMaterial({
+                    size: 0.1,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.6
+                });
+
+                this.particles = new THREE.Points(geometry, material);
+                this.scene.add(this.particles);
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                if (this.terminal) {
+                    this.terminal.rotation.y += 0.005;
+                }
+
+                if (this.particles) {
+                    this.particles.rotation.y += 0.001;
+                }
+
+                this.controls.update();
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            resize() {
+                this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
+            }
+        }
+
+        // ROI Calculator
+        class ROICalculator {
+            constructor() {
+                this.transactionsInput = document.getElementById('transactions');
+                this.avgTransactionInput = document.getElementById('avg-transaction');
+                this.staffSizeInput = document.getElementById('staff-size');
+                
+                this.transactionsValue = document.getElementById('transactions-value');
+                this.avgTransactionValue = document.getElementById('avg-transaction-value');
+                this.staffSizeValue = document.getElementById('staff-size-value');
+                
+                this.monthlySavings = document.getElementById('monthly-savings');
+                this.annualSavings = document.getElementById('annual-savings');
+                this.roiPercentage = document.getElementById('roi-percentage');
+                this.paybackPeriod = document.getElementById('payback-period');
+
+                this.init();
+            }
+
+            init() {
+                this.transactionsInput.addEventListener('input', () => this.update());
+                this.avgTransactionInput.addEventListener('input', () => this.update());
+                this.staffSizeInput.addEventListener('input', () => this.update());
+                
+                this.update();
+            }
+
+            update() {
+                const transactions = parseInt(this.transactionsInput.value);
+                const avgTransaction = parseInt(this.avgTransactionInput.value);
+                const staffSize = parseInt(this.staffSizeInput.value);
+
+                this.transactionsValue.textContent = transactions;
+                this.avgTransactionValue.textContent = `$${avgTransaction}`;
+                this.staffSizeValue.textContent = staffSize;
+
+                // Calculate ROI
+                const dailyRevenue = transactions * avgTransaction;
+                const monthlyRevenue = dailyRevenue * 30;
+                const annualRevenue = monthlyRevenue * 12;
+
+                // Savings calculations (simplified)
+                const efficiencyGain = 0.15; // 15% efficiency gain
+                const errorReduction = 0.05; // 5% error reduction
+                const laborSavings = staffSize * 2000; // $2000 per staff member per year
+
+                const monthlySavings = (monthlyRevenue * efficiencyGain) + (monthlyRevenue * errorReduction) + (laborSavings / 12);
+                const annualSavings = monthlySavings * 12;
+                const roiPercentage = Math.round((annualSavings / 12000) * 100); // Assuming $12k annual cost
+                const paybackPeriod = Math.round((12000 / annualSavings) * 12 * 10) / 10;
+
+                this.monthlySavings.textContent = `$${Math.round(monthlySavings).toLocaleString()}`;
+                this.annualSavings.textContent = `$${Math.round(annualSavings).toLocaleString()}`;
+                this.roiPercentage.textContent = `${roiPercentage}%`;
+                this.paybackPeriod.textContent = `${paybackPeriod}`;
+            }
+        }
+
+        // Industry Personalization
+        class IndustryPersonalizer {
+            constructor() {
+                this.buttons = document.querySelectorAll('.industry-btn');
+                this.title = document.getElementById('hero-title');
+                this.init();
+            }
+
+            init() {
+                this.buttons.forEach(btn => {
+                    btn.addEventListener('click', () => this.switchIndustry(btn.dataset.industry));
+                });
+            }
+
+            switchIndustry(industry) {
+                this.buttons.forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+
+                const titles = {
+                    retail: 'Hardware Designed for Performance',
+                    restaurant: 'Software That Anticipates Needs',
+                    coffee: 'Intelligence Meets Transaction',
+                    pharmacy: 'Precision in Every Transaction'
+                };
+
+                gsap.to(this.title, {
+                    duration: 0.5,
+                    text: titles[industry] || 'Intelligence Meets Transaction',
+                    ease: 'power2.inOut'
+                });
+            }
+        }
+
+        // Scroll Animations
+        class ScrollAnimations {
+            constructor() {
+                this.elements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
+                this.init();
+            }
+
+            init() {
+                this.observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                this.elements.forEach(el => this.observer.observe(el));
+            }
+        }
+
+        // Counter Animation
+        class CounterAnimation {
+            constructor() {
+                this.counters = document.querySelectorAll('.stat-number');
+                this.init();
+            }
+
+            init() {
+                this.observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            this.animateCounter(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.counters.forEach(counter => this.observer.observe(counter));
+            }
+
+            animateCounter(element) {
+                const target = parseInt(element.dataset.target);
+                const duration = 2000;
+                const start = performance.now();
+
+                const animate = (currentTime) => {
+                    const elapsed = currentTime - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    const current = Math.floor(progress * target);
+                    element.textContent = current.toLocaleString();
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                };
+
+                requestAnimationFrame(animate);
+            }
+        }
+
+        // Navbar Scroll Effect
+        class NavbarScroll {
+            constructor() {
+                this.navbar = document.getElementById('navbar');
+                this.init();
+            }
+
+            init() {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 100) {
+                        this.navbar.classList.add('scrolled');
+                    } else {
+                        this.navbar.classList.remove('scrolled');
+                    }
+                });
+            }
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize particle system
+            const particleCanvas = document.getElementById('particle-canvas');
+            new ParticleSystem(particleCanvas);
+
+            // Initialize 3D scene
+            const threeCanvas = document.getElementById('three-canvas');
+            new ThreeScene(threeCanvas);
+
+            // Initialize ROI calculator
+            new ROICalculator();
+
+            // Initialize industry personalizer
+            new IndustryPersonalizer();
+
+            // Initialize scroll animations
+            new ScrollAnimations();
+
+            // Initialize counter animations
+            new CounterAnimation();
+
+            // Initialize navbar scroll effect
+            new NavbarScroll();
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
